@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraudulent Job Posting Detection Portal</title>
+    <style>
+     
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0; /* Removed padding to avoid pushing content down */
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Changed to flex-start to align content at the top */
+        height: 100vh;
+        background-color: #f4f4f4;
+        overflow-y: auto; /* Allow scrolling if content overflows */
+    }
+    .form-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 1000px; /* Restrict max width */
+        margin-top: 20px; /* Add margin to prevent content clipping */
+    }
+    .form-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px; /* Adjust heading size */
+    }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group textarea {
+            resize: none;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .button-group button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        .button-group button:hover {
+            background-color: #0056b3;
+        }
+        .submit-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .submit-button button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        .submit-button button:hover {
+            background-color: #218838;
+        }
+    </style>
+    <!-- Include Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    
+    <!-- Include jQuery and Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+</head>
+<body>
+        <div class="form-container">
+                <h1>Fraudulent Job Posting Detection Portal</h1>
+                <form action="/predict" method="get">
+                    <div class="form-group">
+                        <label for="job-title">Job Title</label>
+                        <input type="text" id="job-title" name="job_title" placeholder="Enter Job Title" required>
+                    </div>
+        <div class="form-group">
+            <label for="job-description">Job Description</label>
+            <textarea id="job-description" name="job-description" rows="3" placeholder="Enter Job Description"></textarea>
+        </div>
+        
+        <div class="form-groups">
+            <label for="salary-range">Salary Range</label>
+            <select id="salary-range" name="salary-range">
+                <option value="" selected>Select Salary Range</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="job-location">Job Location</label>
+            <select id="job-location" name="job-location">
+                <option value="" selected>Select Job Location</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="job-requirements">Job Requirements</label>
+            <textarea id="job-requirements" name="job-requirements" rows="3" placeholder="Enter Job Requirements"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="department">Department</label>
+            <select id="department" name="department">
+                <option value="" selected>Select Department</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="company-profile">Company Profile</label>
+            <textarea id="company-profile" name="company-profile" rows="3" placeholder="Enter Company Profile"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="benefits">Benefits</label>
+            <textarea id="benefits" name="benefits" rows="3" placeholder="Enter Benefits"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="required-education">Required Education</label>
+            <select id="required-education" name="required-education">
+                <option value="" selected>Select Education Level</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="required-experience">Required Experience</label>
+            <select id="required-experience" name="required-experience">
+                <option value="" selected>Select Required Experience</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="industry">What industry does the company belong to?</label>
+            <select id="industry" name="industry">
+                <option value="" selected>Select Industry</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="domain">What domain the job is in?</label>
+            <select id="domain" name="domain">
+                <option value="" selected>Select the Domain</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="employment-type">Employment Type</label>
+            <select id="employment-type" name="employment-type">
+                <option value="" selected>Select Employment Type</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="telecommuting">Does the company have telecommuting positions?</label>
+            <select id="telecommuting" name="telecommuting">
+                <option value="" selected>Select Option</option>
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="logo">Does the company have a logo?</label>
+            <select id="logo" name="logo">
+                <option value="" selected>Select Option</option>
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="screening-questions">Does the company have screening questions?</label>
+            <select id="screening-questions" name="screening-questions">
+                <option value="" selected>Select Option</option>
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+        </div>
+        <div class="button-group">
+            <button type="button">Predict with Model 1</button>
+            <button type="button">Predict with Model 2</button>
+        </div>
+        <div class="submit-button">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+<!-- Script to load locations and initialize Select2 -->
+<script>
+    $(document).ready(function () {
+        // Load the JSON data from the server
+        $.getJSON('static/unique_locations.json', function (data) {
+            console.log("data: " + data);
+
+            // Check if the data is valid
+            if (Array.isArray(data)) {
+                // Add options to the dropdown for each location in the data
+                var select = $('#job-location');
+                data.forEach(function (location) {
+                    select.append(new Option(location, location));
+                });
+
+                // Initialize the Select2 dropdown with a search bar
+                select.select2();
+            } else {
+                console.error("Invalid data format for locations.");
+            }
+        })
+        .done(function () {
+            console.log("Loaded locations");
+        })
+        .fail(function () {
+            console.error("Failed to load locations. Ensure the JSON file is available.");
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Load the JSON data from the server
+        $.getJSON('static/unique_salary_range.json', function (data) {
+            console.log("data: " + data);
+
+            // Check if the data is valid
+            if (Array.isArray(data)) {
+                // Add options to the dropdown for each location in the data
+                var select = $('#salary-range');
+                data.forEach(function (salary) {
+                    select.append(new Option(salary, salary));
+                });
+
+                // Initialize the Select2 dropdown with a search bar
+                select.select2();
+            } else {
+                console.error("Invalid data format for salary.");
+            }
+        })
+        .done(function () {
+            console.log("Loaded salary");
+        })
+        .fail(function () {
+            console.error("Failed to load salary. Ensure the JSON file is available.");
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Load the JSON data from the server
+        $.getJSON('static/unique_department.json', function (data) {
+            console.log("data: " + data);
+
+            // Check if the data is valid
+            if (Array.isArray(data)) {
+                // Add options to the dropdown for each location in the data
+                var select = $('#department');
+                data.forEach(function (department) {
+                    select.append(new Option(department, department));
+                });
+
+                // Initialize the Select2 dropdown with a search bar
+                select.select2();
+            } else {
+                console.error("Invalid data format for department.");
+            }
+        })
+        .done(function () {
+            console.log("Loaded department");
+        })
+        .fail(function () {
+            console.error("Failed to load department. Ensure the JSON file is available.");
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Load the JSON data from the server
+        $.getJSON('static/unique_education.json', function (data) {
+            console.log("data: " + data);
+
+            // Check if the data is valid
+            if (Array.isArray(data)) {
+                // Add options to the dropdown for each location in the data
+                var select = $('#required-education');
+                data.forEach(function (education) {
+                    select.append(new Option(education, education));
+                });
+
+                // Initialize the Select2 dropdown with a search bar
+                select.select2();
+            } else {
+                console.error("Invalid data format for education.");
+            }
+        })
+        .done(function () {
+            console.log("Loaded education");
+        })
+        .fail(function () {
+            console.error("Failed to load education. Ensure the JSON file is available.");
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Load the JSON data from the server
+        $.getJSON('static/unique_experience.json', function (data) {
+            console.log("data: " + data);
+
+            // Check if the data is valid
+            if (Array.isArray(data)) {
+                // Add options to the dropdown for each location in the data
+                var select = $('#required-experience');
+                data.forEach(function (experience) {
+                    select.append(new Option(experience, experience));
+                });
+
+                // Initialize the Select2 dropdown with a search bar
+                select.select2();
+            } else {
+                console.error("Invalid data format for experience.");
+            }
+        })
+        .done(function () {
+            console.log("Loaded experience");
+        })
+        .fail(function () {
+            console.error("Failed to load experience. Ensure the JSON file is available.");
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Load the JSON data from the server
+        $.getJSON('static/unique_industry.json', function (data) {
+            console.log("data: " + data);
+
+            // Check if the data is valid
+            if (Array.isArray(data)) {
+                // Add options to the dropdown for each location in the data
+                var select = $('#industry');
+                data.forEach(function (industry) {
+                    select.append(new Option(industry, industry));
+                });
+
+                // Initialize the Select2 dropdown with a search bar
+                select.select2();
+            } else {
+                console.error("Invalid data format for industry.");
+            }
+        })
+        .done(function () {
+            console.log("Loaded industry");
+        })
+        .fail(function () {
+            console.error("Failed to load industry. Ensure the JSON file is available.");
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Load the JSON data from the server
+        $.getJSON('static/unique_domain.json', function (data) {
+            console.log("data: " + data);
+
+            // Check if the data is valid
+            if (Array.isArray(data)) {
+                // Add options to the dropdown for each location in the data
+                var select = $('#domain');
+                data.forEach(function (domain) {
+                    select.append(new Option(domain, domain));
+                });
+
+                // Initialize the Select2 dropdown with a search bar
+                select.select2();
+            } else {
+                console.error("Invalid data format for domain.");
+            }
+        })
+        .done(function () {
+            console.log("Loaded domain");
+        })
+        .fail(function () {
+            console.error("Failed to load domain. Ensure the JSON file is available.");
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Load the JSON data from the server
+        $.getJSON('static/unique_employment_type.json', function (data) {
+            console.log("data: " + data);
+
+            // Check if the data is valid
+            if (Array.isArray(data)) {
+                // Add options to the dropdown for each location in the data
+                var select = $('#employment-type');
+                data.forEach(function (employment) {
+                    select.append(new Option(employment, employment));
+                });
+
+                // Initialize the Select2 dropdown with a search bar
+                select.select2();
+            } else {
+                console.error("Invalid data format for employment.");
+            }
+        })
+        .done(function () {
+            console.log("Loaded employment");
+        })
+        .fail(function () {
+            console.error("Failed to load employment. Ensure the JSON file is available.");
+        });
+    });
+</script>
+</body>
+</html> 
